@@ -1,0 +1,303 @@
+<html>
+<head>
+	<link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css">
+
+	<script src="js/jscolor.min.js"></script>
+	<script src="js/jquery-1.11.0.min.js"></script>
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+	<link id="theme_stylesheet" rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"></link>
+    <script src='js/jsoneditor.min.js'></script>
+
+	<script>
+	var iosDragDropShim = { enableEnterLeave: true }
+	</script>
+	<script src="js/ios-drag-drop.js"></script>
+<style>
+	* {
+		font-family:Quicksand,sans-serif;
+	}
+	html, body {
+		background-color:#8D9DB1;
+		padding:1rem;
+	}
+	#splash {
+		position:fixed;
+		top:0px;
+		left:0px;
+		width:100%;
+		height:100%;
+		color:white;
+		background-color:#8D9DB1;
+		z-index:100;
+	}
+	#splash h1, #splash b{
+		font-weight:300;
+		font-size:4rem;
+	}
+	#login {
+		/*padding:2rem;*/
+		border:thin solid white;
+		width:400px;
+		text-align:center;
+		margin-top:20%;
+		margin-left:50%;
+		transform:translate(-50%,0);
+	}
+	.collection {
+		padding:0.5rem;
+		margin:1rem;
+		border:thin solid white;
+	}
+	.collection-tab {
+		width:calc(100% - 0.5rem);
+		padding:0;
+		margin:0;
+	}
+	.image {
+		padding:0.5rem;
+	}
+	.collection-name {
+		font-size:1.5rem;
+		font-weight:700;
+		font-style:normal;
+	}
+	.img-table td {
+		padding:0.5rem;
+		border-top:thin solid white;
+	}
+	img {
+		max-height:100%;
+		max-width:100%;
+	}
+</style>
+</head>
+<body>
+
+<div id="splash">
+	<div id="login">
+		<h1>ma<b style="font-weight:700">voix</b></h1>
+		<p>
+		<i style='font-size:3rem;display:block;margin-bottom:10px' class='fa fa-user'></i>
+		<input id='user-name' style='color:black' type='text' />
+		<p>
+		<i style='font-size:3rem;display:block;margin-bottom:10px' class='fa fa-lock'></i>
+		<input id='user-password' style='color:black;margin-bottom:2rem' onchange='enterLogin()' type='password' />
+	</div>
+</div>
+
+<!--
+<h1 style="color:white;font-weight:100">ma<b style="font-weight:700">voix</b></h1>
+-->
+
+<div class="collection" id="enterCollectionTemplate" style="display:none;vertical-align:middle">
+	<table style="width:100%">
+		<tr>
+		<td style="vertical-align:top;width:200px">
+			<div class="collection-tab">
+				<i class="collection-name" style="contentEditable:true;margin-bottom:1rem;display:block">Untitled Collection</i>
+				<!--
+				<button class="jscolor {valueElement:null,value:'66ccff'}">
+				</button>
+				-->
+				<div style="display:inline-block;width:1rem;height:1rem;background-color:orange;border-radius:2rem;border:thin solid white;vertical-align:middle">
+				</div>
+				<span style="color:white">Background color</span>
+				<!-- <input type="color" style="width:2rem;height:2rem;padding:0px;margin:0px" class="collection-color"/><br/> -->
+			</div>
+		</td>
+		<td>
+			<table class="img-table" style="width:100%">
+				<tr style="color:white;text-align:left">
+					<th></th>
+					<th>Image</th>
+					<th>Name</th>
+					<th>URL</th>
+					<th>Permission</th>
+				</tr>
+			</table>
+		</td>
+		</tr>
+	</table>
+</div>
+
+<table style="display:none">
+<tr class="image" id="enterImageTemplate">
+	<td style="width:50px">
+		<i style="color:white;font-size:1.5rem" class="fa fa-plus-circle" aria-hidden="true" onclick="addImage($(this).parent())"></i>
+		<i style="color:white;font-size:1.5rem" class="fa fa-minus-circle" aria-hidden="true" onclick="removeImage($(this).parent())"></i>
+	</td>
+	<td style="width:64px;height:64px;margin:8px;">
+		<img />
+	</td>
+	<td contentEditable style="height:32px" onchange="enterImageName(this)" class="image-name">
+	</td>
+	<td contentEditable style="height:32px" onchange="enterImageURL(this)" class="image-url">
+	</td>
+	<td contentEditable style="height:32px" onchange="enterImagePermission(this)" class="image-permission">
+	</td>
+</tr>
+</table>
+
+<input type="color" id="pickcolor" style="display:none" />
+
+<script>
+function pickcolor() {
+	console.log("pick color");
+    var elem = document.getElementById('pickcolor');
+    if(elem)
+        elem.click();
+}
+</script>
+
+<script>
+function enterImageName(ob) {
+	var name=$(ob).val();
+}
+function enterImageURL(ob) {
+	var img=$(ob).closest("div.image").find("img");
+	$(img).attr("src",$(ob).val());
+}
+function addCollection(ob) {
+	var enterCollection=$("#enterCollectionTemplate").clone();
+	enterCollection.removeAttr("id","enterCollectionTemplate");
+	$("body").append(enterCollection);
+	enterCollection.show();
+	
+	if(ob) {
+		enterCollection.find(".collection-name").text(ob.name);
+		enterCollection.find(".collection-color").val("#"+ob.color.red.toString(16)+ob.color.green.toString(16)+ob.color.blue.toString(16));
+		enterCollection.attr('id',ob.cid);
+	}
+}
+function addImage(ob) {
+	var enterImage=$("#enterImageTemplate").clone();
+	enterImage.removeAttr("id","enterImageTemplate");
+	$(ob).parent().append(enterImage);
+	enterImage.show();
+}
+function addImageToCollection(img,col) {
+	var coll=$("#"+col.cid).find("table.img-table");
+	var enterImage=$("#enterImageTemplate").clone();
+	enterImage.removeAttr("id","enterImageTemplate");
+	enterImage.find(".image-name").text(img.name);
+	enterImage.find(".image-url").text(img.url);
+	enterImage.find(".image-permission").text(img.permission);
+	enterImage.find("img").attr('src',img.url);
+	coll.append(enterImage);
+	enterImage.show();
+}
+
+function enterLogin() {
+	var n=$("#user-name").val();
+	var p=$("#user-password").val();
+	
+	if(n=="demo" && p=="or die") {
+		loadUser();
+	}
+}
+function loadUser() {
+	localStorage.mavoix=JSON.stringify(new Date());
+
+	$("#splash").remove();
+
+	$.getJSON("config.json",function(data) {
+		var i,j;
+		for(i=0;i<data.collections.length;i++) {
+			addCollection(data.collections[i]);
+			for(j=0;j<data.collections[i].images.length;j++) {
+				addImageToCollection(data.collections[i].images[j],data.collections[i]);
+			}
+		}
+	});
+}
+function configure_schema() {
+    var schema={
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		title: "Classeur",
+		type: "object",
+		properties: {
+			collections: {
+				title: "Collections",
+				type: "array",
+				items: {
+					title: "Collection",
+					headerTemplate: "{{ i1 }} - {{ self.name }}",
+					type: "object",
+					properties: {
+						cid: {type: "string"},
+						name: {type: "string"}, 
+						color: {
+							type: "string",
+							format:"color"
+						}, 
+						images: {
+							title:"Images",
+							type: "array",
+							format:"table",
+							items: {
+								title:"Image",
+								type: "object",
+								properties: {
+									id: {type: "string"}, 
+									name: {type: "string"},
+									url: {type: "string",format:"url"}
+								},
+								required: ["id",  "name"]
+							},
+							uniqueItems: true
+						},
+					},
+					required: ["cid"]
+				}
+			}
+		}
+	};
+	
+    // Set options from direct link
+	JSONEditor.defaults.options.theme = 'bootstrap2';
+	JSONEditor.defaults.options.iconlib = 'bootstrap2';
+    JSONEditor.defaults.options.object_layout = 'normal';
+    JSONEditor.defaults.options.show_errors ='interaction';
+	JSONEditor.defaults.options['required_by_default']=false;
+	JSONEditor.defaults.options['no_additional_properties']=true;
+	JSONEditor.defaults.options['ajax']=false;
+	JSONEditor.defaults.options['disable_edit_json']=false;
+	JSONEditor.defaults.options['disable_collapse']=true;
+	JSONEditor.defaults.options['disable_properties']=true;
+	JSONEditor.defaults.options['disable_array_add']=false;
+	JSONEditor.defaults.options['disable_array_reorder']=false;
+	JSONEditor.defaults.options['disable_array_delete']=false;
+	JSONEditor.defaults.options['disable_array_delete_all_rows']=false;
+	JSONEditor.defaults.options['disable_array_delete_last_row']=true;
+	
+    // Divs/textareas on the page
+    //var $editor = document.getElementById('editor');    
+	//var jsoneditor = new JSONEditor($editor,{schema: schema});
+	
+	$("body").append("user: demo");
+	
+	var addCollectionButton=$("<button>");
+	addCollectionButton.html("+ collection");
+	addCollectionButton.css({display:"block"});
+	addCollectionButton.click(addCollection);
+	$("body").append(addCollectionButton);
+}
+// If last login is more recent than 2 hours, just enter
+var date_last=null;
+var date_now=new Date();
+if(localStorage.mavoix) {
+	date_last=new Date(JSON.parse(localStorage.mavoix));
+}
+if(date_last && date_now) {
+	var diff_in_hours=(date_now-date_last)/1000/60/60;
+	if(diff_in_hours<1)
+		loadUser();
+}
+
+</script>
+</body>
+</html>
