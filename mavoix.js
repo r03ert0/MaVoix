@@ -344,7 +344,7 @@ function enterLogin() {
 	var n=$("#user-name").val();
 	var p=$("#user-password").val();
 	
-	if(n=="demo" && p=="or die") {
+	if(n=="demo" && p=="please") {
 		loadUser();
 	}
 }
