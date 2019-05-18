@@ -30,6 +30,7 @@ module.exports = function (ctx) {
       components: [
         'QBtn',
         'QBtnGroup',
+        'QBtnToggle',
         'QCard',
         'QCardActions',
         'QCardSection',

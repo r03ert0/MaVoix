@@ -8,6 +8,7 @@
         <q-tabs
           align="left"
           indicator-color="transparent"
+          class="text-white"
           swipeable
           v-model="selectedTab">
           <template v-for="(tab, index) in tabs">
@@ -61,19 +62,20 @@
       </q-tab-panels>
 
       <!-- Voice Bar -->
-      <div style="flex:0 220px">
-        <div style="min-height:220px"
+      <div style="flex:0 220px"
+      >
+        <div style="height:100%"
           :class="{ 'bg-secondary': isDraggingOver, 'bg-dark': !isDraggingOver }"
           @drop="drop($event)"
           @dragover="dragOver($event)"
           @dragleave="dragLeave($event)" >
 
-          <div style="position:absolute;right:0;display:inline-block;width:100px;padding:10px;">
+          <div style="position:absolute;right:0;display:inline-block;width:100px;padding:0px;">
             <q-btn @click="play()" round class="row q-ma-sm bg-white float-right" icon="play_arrow" size="24px" />
             <q-btn @click="clear()" round class="row q-ma-sm bg-white float-right" icon="delete" size="24px" />
           </div>
 
-          <div class="q-pa-md row items-start q-gutter-md">
+          <div class="q-pa-md row">
             <template v-for="(image, index) in phrase">
               <q-card
                 draggable

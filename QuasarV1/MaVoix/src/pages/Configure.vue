@@ -3,9 +3,6 @@
 
     <!-- Application-wide configuration -->
     <q-list class="justify-center bg-white q-ma-md q-pa-md">
-      <q-item-label header>
-        General Configuration
-      </q-item-label>
 
       Voices
       <div style="max-width:250px">
@@ -13,11 +10,18 @@
       </div>
 
       Image size
-      <q-btn-group>
-        <q-btn label="Small" />
-        <q-btn label="Medium" />
-        <q-btn label="Large" />
-      </q-btn-group>
+      <div style="max-width:250px">
+        <q-btn-toggle
+          v-model="imageSize"
+          toggle-color="primary"
+          no-caps
+          :options="[
+            {label: 'Small', value: 0},
+            {label: 'Medium', value: 1},
+            {label: 'Large', value: 2}
+          ]"
+        />
+      </div>
     </q-list>
 
     <!-- Add new tab -->
@@ -36,34 +40,30 @@
       <!-- Tab-wide configuration -->
       <template v-slot:header>
         <q-item-section side>
-          <q-btn flat icon="delete" @click="deleteTab({ tabIndex: index })" />
+          <div>
+            <q-btn flat icon="delete" @click="deleteTab({ tabIndex: index })" />
+            <q-chip small class="q-mr-sm">{{tab.name}}</q-chip>
+          </div>
         </q-item-section>
-        <q-item-section>
-          <q-chip icon="edit" small class="q-mr-sm">
-            {{tab.name}}
-            <q-popup-edit v-model="tab.name" title="Update tab name" buttons>
-              <q-input v-model="tab.name" />
-            </q-popup-edit>
-          </q-chip>
-        </q-item-section>
+        <q-item-section />
       </template>
-      <q-btn no-caps icon="add" @click="addImage({ tabIndex: index })" label="Add image" class="q-mr-sm" />
-      <q-input
-        filled
-        style="max-width:150px"
-      >
-        <template v-slot:append>
-          <q-icon name="colorize" class="cursor-pointer">
-            <q-popup-proxy>
-              <q-color
-                no-header
-                value="tab.tabColor"
-                @change="(val) => updateTabColor({ tabIndex: index, tabColor: val })"
-              />
-            </q-popup-proxy>
-          </q-icon>
-        </template>
-      </q-input>
+
+      <q-btn no-caps icon="edit" label="Edit tab name" class="q-mr-sm bg-white">
+        <q-popup-edit v-model="tab.name" title="Update tab name" buttons>
+          <q-input v-model="tab.name" />
+        </q-popup-edit>
+      </q-btn>
+
+      <q-btn no-caps icon="add" @click="addImage({ tabIndex: index })" label="Add image" class="q-mr-sm bg-white" />
+      <q-btn no-caps icon="colorize" label="Tab color" class="q-mr-sm bg-white" >
+        <q-popup-proxy>
+          <q-color
+            no-header
+            value="tab.tabColor"
+            @change="(val) => updateTabColor({ tabIndex: index, tabColor: val })"
+          />
+        </q-popup-proxy>
+      </q-btn>
 
       <!-- Tab image configuration -->
       <q-list separator class="justify-center bg-white q-ma-sm">
@@ -96,9 +96,15 @@
 
     <!-- Phrase image configuration -->
     <q-expansion-item
-      class="q-ma-md bg-white"
-      label="Voice bar" >
-
+      class="q-ma-md bg-white" >
+      <template v-slot:header>
+        <q-item-section side>
+          <div>
+            <q-chip small class="q-mr-sm">Voice bar</q-chip>
+          </div>
+        </q-item-section>
+        <q-item-section />
+      </template>
       <!-- Phrase image configuration -->
       <q-list separator class="justify-center bg-white q-ma-sm">
         <q-item dense v-for="(image, index) in phrase" :key="'phrase-' + index">
@@ -141,7 +147,8 @@ export default {
   data () {
     return {
       opened: false,
-      selectedTab: 0
+      selectedTab: 0,
+      imageSize: 1
     }
   },
   computed: {
