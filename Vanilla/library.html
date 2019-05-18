@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MaVoix Library</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@^2.0.0/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.mat.min.css" rel="stylesheet" type="text/css">
+    </head>
+        
+    <body>
+
+        <div id="q-app">
+            <q-search v-model="terms">
+                <q-autocomplete @search="search" @selected="selected"></q-autocomplete>
+            </q-search>
+
+            <q-infinite-scroll :handler="loadMore">
+                <div v-for="(item, index) in items" class="caption" style="display:inline-block;padding:10px">
+                    <q-card inline style="width: 200px">
+                        <q-card-media style="padding:20px">
+                            <img :src="item.url">
+                        </q-card-media>
+                        <q-card-title>
+                            {{item.name}}
+                            <q-rating slot="subtitle" :max="5"></q-rating>
+                        </q-card-title>
+                        <q-card-separator></q-card-separator>
+                        <q-card-actions>
+                            <q-btn flat icon="add"></q-btn>
+                            <q-btn flat icon="info"></q-btn>
+                            <q-btn flat icon="share"></q-btn>
+                            <q-btn flat icon="visibility"></q-btn>
+                        </q-card-actions>
+                    </q-card>
+                </div>
+                <q-spinner-dots slot="message" :size="40"></q-spinner-dots>
+            </q-infinite-scroll>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue@latest/dist/vue.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/quasar-framework@0.17.8/dist/umd/quasar.mat.umd.min.js"></script>
+        <script src="library.js"></script>
+    </body>
+</html>

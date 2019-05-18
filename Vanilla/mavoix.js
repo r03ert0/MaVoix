@@ -1,61 +1,30 @@
-var speech=window.speechSynthesis;
-var voices=speech.getVoices();
-var myvoice={
-	library:[],
-	collection:[],
-	log:[],
-	state:{
-		showLibrary:false,
-		showCollection:[],
-		showStatistics:false,
-		selectedCollection:""
+const speech = window.speechSynthesis;
+const voices = speech.getVoices();
+const myvoice = {
+	library: [],
+	collection: [],
+	log: [],
+	state: {
+		showCollection: [],
+		selectedCollection: ""
 	}
 };
-var dbroot="http://siphonophore.org/Interact/php/interact.php";
-var count=0;
-
-//startFirebug();
+const dbroot = "http://siphonophore.org/Interact/php/interact.php";
+let count = 0;
 
 function displayInterface() {
-	var flag=0;
-	for(var i=0;i<myvoice.state.showCollection.length;i++) {
+	var flag = 0;
+
+	for(var i=0; i<myvoice.state.showCollection.length; i++) {
 		myvoice.state.showCollection[i]?$('#cid'+i).show():$('#cid'+i).hide();
-		flag+=myvoice.state.showCollection[i];
+		flag += myvoice.state.showCollection[i];
 	}
+
 	flag?$('#collections').show():$('#collections').hide();
-	myvoice.state.showLibrary?$('#library').show():$('#library').hide();
-	myvoice.state.showStatistics?$('#statistics').show():$('#statistics').hide();
 }
 
-$('#show-lib').click(function(){
-	for(var i=0;i<myvoice.state.showCollection.length;i++)
-		myvoice.state.showCollection[i]=false;
-	myvoice.state.showLibrary=true;
-	myvoice.state.showStatistics=false;
-	displayInterface();
-});
-$('#show-stats').click(function(){
-	for(var i=0;i<myvoice.state.showCollection.length;i++)
-		myvoice.state.showCollection[i]=false;
-	myvoice.state.showLibrary=false;
-	myvoice.state.showStatistics=true;
-	displayInterface();
-	displayStatistics();
-});
-
-$("#add-lib").click(function(){
-	// add action to library
-	var name=prompt("Action name:");
-	var h=hash(name);
-	var a={id:h,name:name}
-	if(indexOfAction(myvoice.library,a)>=0) {
-		alert("Action exists already in the library");
-		return;
-	}
-	addActionToLibrary(a);
-});
-$("#add-col").click(function(){
-	// action to add collection to interface
+// action to add collection to interface
+$("#add-col").click(function() {
 	var name=prompt("Collection name:");
 	var h=hash(name);
 	var c={id:h,name:name}
@@ -65,7 +34,9 @@ $("#add-col").click(function(){
 	}
 	addCollection(c);
 });
-$("#play").click(function() {
+
+// play the phrase in the voice bar
+$("#play").on('click', function() {
 	var arr=$("#voice .action");
 	var i=0;
 	var f=function(val) {
@@ -86,7 +57,9 @@ $("#play").click(function() {
 	}
 	f(0);
 });
-$("#clear").click(function() {
+
+// clear the voice bar
+$("#clear").on('click', function() {
 	var arr=$("#voice .action");
 	for(var i=0;i<arr.length;i++) {
 		var cid=$(arr[i]).attr('data-cid');
@@ -95,6 +68,7 @@ $("#clear").click(function() {
 	}
 });
 
+// return index of an action
 function indexOfAction(arr,elem) {
 	for(var i=0;i<arr.length;i++) {
 		if(arr[i].id==elem.id)
@@ -102,6 +76,8 @@ function indexOfAction(arr,elem) {
 	}
 	return undefined;
 }
+
+// return the index of a collection
 function indexOfCollection(cid) {
 	for(var i=0;i<myvoice.collection.length;i++) {
 		if(myvoice.collection[i].cid==cid)
@@ -109,6 +85,8 @@ function indexOfCollection(cid) {
 	}
 	return undefined;
 }
+
+// hash for a string
 function hash(str) {
 	var i,v0,v1,abc="0123456789" +"abcdefghijklmnopqrstuvwxyz" +"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	v0=0;
@@ -123,8 +101,11 @@ function hash(str) {
 		res+=abc[v];
 		v0=v1;
 	}
+
 	return res;
 }
+
+// hash color from a string
 function hashColor(name) {
     //if(debug) console.log("> regionHashColor");
 
@@ -146,21 +127,14 @@ function hashColor(name) {
     color.red = parseInt(255*0.6+color.red*0.4);
     color.green = parseInt(255*0.6+color.green*0.4);
     color.blue = parseInt(255*0.6+color.blue*0.4);
-    console.log(color);
-    return color;
+
+	return color;
 }
 
-function startFirebug() {
-	var fb = document.createElement('script');
-	fb.type = 'text/javascript';
-	fb.src = 'https://getfirebug.com/firebug-lite.js#startOpened';
-	document.getElementsByTagName('body')[0].appendChild(fb);
-}
-
+// add collection to interface
+// todo: code to add the collection div with id=cid, and
+// the tab button with data-cid= the numeic part of the cid
 function addCollection(obj) {
-	// add collection to interface
-	// todo: code to add the collection div with id=cid, and
-	// the tab button with data-cid= the numeic part of the cid
 	var cid="cid"+count;
 	var name="Collection "+(count+1);
 	var color;
@@ -178,6 +152,7 @@ function addCollection(obj) {
 	myvoice.state.showCollection.push(false);
 	
 	if(!color) color=hashColor(name);
+
 	// add collection content div
 	$("#content").prepend([
 		"<div class='collection'",
@@ -201,6 +176,7 @@ function addCollection(obj) {
 	count++;
 	return cid;
 }
+
 function showCollection(c) {
 	var cid="cid"+$(c).data("cid");
 	var j=indexOfCollection(cid);
@@ -211,6 +187,9 @@ function showCollection(c) {
 	displayInterface();
 };
 
+/*
+Drag & drop handling
+*/
 function drag(ev) {
 	$(ev.target).closest("div").attr("id","moving");
     ev.dataTransfer.setData("text", "moving");
@@ -242,6 +221,8 @@ function drop(ev) {
 	}
 	var action={actionID:action.id,actionName:action.name,destID:dstid,destName:destName,time:new Date()}; // todo: more meaningful and stable information about the collection
 	myvoice.log.push(action);
+
+/*
 	$.ajax({
 		url:dbroot,
 		type:"POST",
@@ -258,6 +239,7 @@ function drop(ev) {
 			console.log("< interactSave: ERROR: "+textStatus+" "+errorThrown);
 		}
 	});
+*/
 
 	var el=$("#"+srcid).detach();
 	$("#"+dstid).append(el);
@@ -265,6 +247,7 @@ function drop(ev) {
     $("#"+srcid).removeAttr('id');
 }
 
+// add an action to a collection
 function addActionToCollection(a,cid) {
 	var i=indexOfCollection(cid);
 
@@ -287,59 +270,8 @@ function addActionToCollection(a,cid) {
 		ondragstart:'drag(event)',
 		"data-cid":cid
 	});
-
-
-/*
-	var newAction=$('#library .'+a.id);
-	newAction.find('.add-col').attr('disabled',true);
-	var collectionAction=newAction.clone(true).appendTo(".collection#"+cid);
-	
-	collectionAction.attr({
-		draggable:true,
-		ondragstart:'drag(event)',
-		"data-cid":cid
-	});
-*/
 }
 
-function displayStatistics() {
-	var i;
-	$('#statistics').html('<table>');
-	for(i=0;i<myvoice.log.length;i++) {
-		var time=new Date(myvoice.log[i].time);
-		$('#statistics').append(
-			'<tr>'+
-			'<td>'+myvoice.log[i].actionID+'</td>'+
-			'<td>'+myvoice.log[i].actionName+'</td>'+
-			'<td>'+myvoice.log[i].destID+'</td>'+
-			'<td>'+myvoice.log[i].destName+'</td>'+
-			'<td>'+time.toTimeString()+'</td>'+
-			'</tr>');
-	}
-	$('#statistics').append('</table>');
-}
-/*
-function configure(stored) {
-	console.log(stored);
-	var i;
-
-	// add actions to library
-	for(i=0;i<stored.library.length;i++) {
-		addActionToLibrary(stored.library[i]);
-	}
-	// add collections and its actions
-	for(i in stored.collection) {
-		var c=stored.collection[i];
-		addCollection(c);
-		for(j in stored.collection[i].actions) {
-			addActionToCollection(stored.collection[i].actions[j],c.cid);
-		}
-	}
-	myvoice.state=stored.state;
-	// load log
-	myvoice.log=stored.log;
-}
-*/
 function enterLogin() {
 	var n=$("#user-name").val();
 	var p=$("#user-password").val();
@@ -349,7 +281,6 @@ function enterLogin() {
 	}
 }
 
-/*$(window).bind('load', function() {*/
 function loadUser() {
 	localStorage.mavoix=JSON.stringify(new Date());
 
@@ -358,18 +289,6 @@ function loadUser() {
 	$("#content").show();
 	displayInterface();
 
-	/*
-	var stored=localStorage.getItem('myvoice');
-	if(stored!=undefined) {
-		console.log(stored);
-		stored=JSON.parse(stored);
-		configure(stored);
-	}
-	else
-		$('body').append('localStorage is empty<br/>');
-	myvoice.state.selectedCollection=myvoice.collection[0].cid;
-	displayInterface();
-	*/
 	myvoice.state.showCollection=[];
 	myvoice.log=[];
 
@@ -391,7 +310,8 @@ function loadUser() {
 		displayInterface();
 	});
 }
-$(window).unload(function(){
+
+$(window).on('unload', function () {
 	localStorage.setItem('myvoice',JSON.stringify(myvoice));
 });
 
@@ -407,3 +327,45 @@ if(date_last && date_now) {
 		loadUser();
 }
 
+Vue.component('c-login', {
+	template: `
+	<div id="splash">
+		<div id="login">
+			<h1>ma<b style="font-weight:700">voix</b></h1>
+			<p>
+				<i style="font-size:3rem;display:block;margin-bottom:10px" class="fa fa-user"></i>
+				<input id="user-name" style="color:black" type="text" />
+			</p>
+			<p>
+				<i style="font-size:3rem;display:block;margin-bottom:10px" class="fa fa-lock"></i>
+				<input id="user-password" style="color:black;margin-bottom:2rem" onchange="enterLogin()" type="password" />
+			</p>
+		</div>
+	</div>
+	`
+});
+
+/*
+Vue.component('c-tabs', {
+	template: `
+	<div id="tabs">
+	</div>
+	`
+});
+
+Vue.component('c-action', {
+	template: `
+	<div class="action">
+		<span class="name"></span>
+		<img />
+	</div>
+	`
+});
+*/
+
+const app = new Vue({
+	el: '#root',
+	data: {
+		thought: 'To be or not to be'
+	}
+});
