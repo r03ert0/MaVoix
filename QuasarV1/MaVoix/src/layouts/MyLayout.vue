@@ -76,6 +76,9 @@ export default {
           }
         }
         this.$store.commit('mavoix/updateTabs', sub.tabs)
+        this.$store.commit('mavoix/updateName', sub.name)
+        this.$store.commit('mavoix/updateVoice', sub.voice)
+        this.$store.commit('mavoix/updateId', sub.id)
       })
 
     this.$hello.on('auth.login', (auth) => {

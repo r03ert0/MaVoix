@@ -44,7 +44,8 @@
                   :disabled="image.unavailable?true:false"
                   :key="selectedTabIndex + '-' + index" >
                   <q-img
-                    style="padding:2px;user-drag: none"
+                    contain
+                    style="height:150px;padding:2px;user-drag:none"
                     :src="image.url" >
                     <template v-if="image.unavailable">
                       <div style="position:absolute;top:5%;left:5%;display:inline-block;width:90%;height:90%;background:red;border-radius:100%">
@@ -85,7 +86,8 @@
                 :key="index"
                 @dragstart.native="drag(index, $event)" >
                   <q-img
-                    style="padding:2px;user-drag:none"
+                    contain
+                    style="height:150px;padding:2px;user-drag:none"
                     :src="image.url" >
                   </q-img>
                   <q-card-section>

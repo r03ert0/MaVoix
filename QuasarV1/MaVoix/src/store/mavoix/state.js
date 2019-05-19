@@ -1,4 +1,7 @@
 export default {
+  id: null,
+  name: null,
+  voice: null,
   tabs: [],
   phrase: [],
   voices: [],

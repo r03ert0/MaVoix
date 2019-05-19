@@ -22,6 +22,10 @@
           ]"
         />
       </div>
+
+      <q-btn no-caps icon="save" label="Save" @click="save"/>
+      <q-btn no-caps icon="restore" label="Restore" @click="restore"/>
+
     </q-list>
 
     <!-- Add new tab -->
@@ -243,6 +247,22 @@ export default {
     updateTabColor ({ tabIndex, tabColor }) {
       console.log('update tab color', tabColor, ', tab index', tabIndex)
       this.$store.commit('mavoix/updateTabColor', { tabIndex, tabColor })
+    },
+    save () {
+      const { id, name, voice, tabs } = JSON.parse(JSON.stringify(this.$store.state.mavoix))
+      this.$axios.put(`http://localhost:3000/users/${id}`, { id, name, voice, tabs })
+        .then((res) => {
+          console.log(res)
+          this.$q.notify({ message: 'Successfully saved', color: 'green' })
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$q.notify({ message: 'Save failed', color: 'red' })
+        })
+    },
+    restore () {
+      console.log('Restore')
+      this.$q.notify({ message: 'Not implemented yet', color: 'orange' })
     }
   },
   components: {
