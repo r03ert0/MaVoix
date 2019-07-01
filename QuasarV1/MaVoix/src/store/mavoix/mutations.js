@@ -1,12 +1,15 @@
 export const updateId = (state, id) => {
   state.id = id
 }
+
 export const updateName = (state, name) => {
   state.name = name
 }
+
 export const updateVoice = (state, voice) => {
   state.voice = voice
 }
+
 export const updateTabs = (state, tabs) => {
   state.tabs.length = 0
   state.tabs = state.tabs.concat(tabs)

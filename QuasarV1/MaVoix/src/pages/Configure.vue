@@ -250,7 +250,7 @@ export default {
     },
     save () {
       const { id, name, voice, tabs } = JSON.parse(JSON.stringify(this.$store.state.mavoix))
-      this.$axios.put(`http://localhost:3000/users/${id}`, { id, name, voice, tabs })
+      this.$axios.put(`https://mavoix-connect.herokuapp.com/users/${id}`, { id, name, voice, tabs })
         .then((res) => {
           console.log(res)
           this.$q.notify({ message: 'Successfully saved', color: 'green' })

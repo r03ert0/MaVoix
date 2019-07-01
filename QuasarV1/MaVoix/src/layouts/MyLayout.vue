@@ -59,7 +59,7 @@ export default {
     }
   },
   mounted () {
-    this.$axios.get('http://localhost:3000/users?name=Luz')
+    this.$axios.get('https://mavoix-connect.herokuapp.com/users?name=Luz')
       .then((res) => {
         const sub = res.data[0]
         for (const tab of sub.tabs) {
@@ -91,9 +91,33 @@ export default {
         })
     })
 
-    const speech = window.speechSynthesis
-    speech.onvoiceschanged = () => {
-      this.$store.commit('mavoix/updateVoices', speech.getVoices())
+    /* if (this.$q.platform.is.cordova) {
+      document.addEventListener('deviceready', function () {
+        window.TTS.speak('Welcome to my awesome app', function () {
+          console.log('Ready !')
+        }, function (reason) {
+          console.log(reason)
+        })
+      })
+      const u = new window.SpeechSynthesisUtterance();
+      const txt = "Bonjour";
+      u.text = txt;
+      u.lang = 'fr-FR';
+      window.speechSynthesis.speak(u);
+    }
+    */
+
+    function populateVoiceList (speech, store) {
+      if (typeof speech === 'undefined') {
+        return
+      }
+      const voices = speech.getVoices()
+      console.log('got voices', voices)
+      store.commit('mavoix/updateVoices', voices)
+    }
+    populateVoiceList(window.speechSynthesis, this.$store)
+    if (typeof window.speechSynthesis !== 'undefined' && window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = populateVoiceList(window.speechSynthesis, this.$store)
     }
 
     // this.getProfile()

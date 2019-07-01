@@ -39,7 +39,7 @@
                   v-if="image.hidden === false"
                   class="q-ma-sm bg-white"
                   style="width: 150px"
-                  @dragstart.native="drag(index2, index, $event)"
+                  @dragstart="drag(index2, index, $event)"
                   :draggable="image.unavailable?false:true"
                   :disabled="image.unavailable?true:false"
                   :key="selectedTabIndex + '-' + index" >
@@ -69,6 +69,7 @@
           :class="{ 'bg-secondary': isDraggingOver, 'bg-dark': !isDraggingOver }"
           @drop="drop($event)"
           @dragover="dragOver($event)"
+          @dragenter="$event.preventDefault()"
           @dragleave="dragLeave($event)" >
 
           <div style="position:absolute;right:0;display:inline-block;width:100px;padding:0px;">
@@ -84,7 +85,7 @@
                 style="width: 150px"
                 :style="image.style"
                 :key="index"
-                @dragstart.native="drag(index, $event)" >
+                @dragstart="drag(index, $event)" >
                   <q-img
                     contain
                     style="height:150px;padding:2px;user-drag:none"
@@ -105,6 +106,14 @@
 </template>
 
 <script>
+import { polyfill } from 'mobile-drag-drop'
+polyfill({})
+
+import { disableBodyScroll } from 'body-scroll-lock'
+const targetElement = document.querySelector('body')
+disableBodyScroll(targetElement)
+window.addEventListener('touchmove', function () {})
+
 export default {
   name: 'Tabs',
   data () {
@@ -132,7 +141,7 @@ export default {
     }
   },
   mounted () {
-    this.$axios.get('http://localhost:3000/users?name=Luz')
+    this.$axios.get('https://mavoix-connect.herokuapp.com/users?name=Luz')
       .then((res) => {
         const sub = res.data[0]
         this.name = sub.name
