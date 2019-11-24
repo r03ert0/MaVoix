@@ -1,3 +1,8 @@
+1. `npm install`
+2. Copy `.env.exemple` to `.env`
+3. `npm start`
+
+
 git push heroku master
 
 502  heroku login
@@ -58,3 +63,4 @@ git push heroku master
   557  heroku logs
   558  heroku logs --tail
   559  history
+

@@ -1,6 +1,3 @@
-[submodule "mavoix-api"]
-	path = mavoix-api
-	url = https://github.com/connectproject/mavoix-api.git
 [submodule "mavoix-app"]
 	path = mavoix-app
 	url = https://github.com/connectproject/mavoix-app.git
