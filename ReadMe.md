@@ -58,4 +58,3 @@ git push heroku master
   557  heroku logs
   558  heroku logs --tail
   559  history
-
