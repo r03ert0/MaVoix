@@ -4,3 +4,6 @@
 [submodule "mavoix-panel"]
 	path = mavoix-panel
 	url = https://github.com/connectproject/mavoix-panel.git
+[submodule "mavoix-api"]
+	path = mavoix-api
+	url = https://github.com/connectproject/mavoix-api.git

@@ -1,0 +1,2 @@
+node_api: cd mavoix-api && npm install && npm start
+node_app: cd mavoix-app && npm install && quasar dev
